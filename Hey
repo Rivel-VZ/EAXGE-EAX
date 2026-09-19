@@ -1,56 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>EAXGE EAX</title>
-
-<style>
-body {
-  margin: 0;
-  background: #000000;
-  color: #f0f0f0;
-  font-family: system-ui, sans-serif;
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  text-align: center;
-  transition: background 0.3s;
-}
-
-main {
-  padding: 30px;
-}
-
-h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-p {
-  margin: 12px 0;
-  opacity: 0.10;
-}
-
-#clue {
-  margin-top: 25px;
-}
-</style>
-</head>
-
-<body>
-
-<main>
-  <h1>☀</h1>
-
-  <p id="status">can YOU prove it.</p>
-
-  <p id="clue">wrong</p>
-</main>
-
 <script>
-
 const DRIVE_1 =
 "https://drive.google.com/drive/folders/1valQtwpUoLt5QxvNnAakI_NV4Si_K7vv2_ZXUbYL1OomYRB6t1O0kuFBXlix7EoZ49U4brI3";
 
@@ -60,26 +8,32 @@ const DRIVE_2 =
 const status = document.getElementById("status");
 const clue = document.getElementById("clue");
 
-let firstLoad = true;
+let lastOrientation = null;
 let redirected = false;
+
+function getOrientation() {
+
+  if (screen.orientation) {
+    return screen.orientation.angle;
+  }
+
+  if (typeof window.orientation === "number") {
+    return window.orientation;
+  }
+
+  return 0;
+}
 
 function checkOrientation() {
 
-  const angle = screen.orientation?.angle ?? 0;
+  const angle = getOrientation();
 
-  console.log("ANGLE:", angle);
-
-  /*
-    PC
-  */
-  if (!("ontouchstart" in window) && !navigator.maxTouchPoints) {
-    clue.textContent = "...";
-    return;
-  }
+  console.log("ORIENTATION:", angle);
 
   /*
-    HP TEGAK
+    TEGAK
   */
+
   if (angle === 0 || angle === 180) {
 
     status.textContent = "can YOU prove it.";
@@ -90,22 +44,23 @@ function checkOrientation() {
     return;
   }
 
+
   /*
-    HP MIRING
+    MIRING KIRI
   */
-  if (angle === 270 || angle === 90) {
+
+  if (angle === 270 || angle === -90) {
 
     status.textContent = "can YOU price it";
     clue.textContent = "wrong";
 
     document.body.style.background = "#5D0D02";
 
-    /*
-      Jangan redirect saat pertama kali halaman dibuka.
-      Redirect hanya setelah HP benar-benar berubah orientasi.
-    */
-
-    if (!firstLoad && !redirected) {
+    if (
+      lastOrientation !== null &&
+      lastOrientation !== angle &&
+      !redirected
+    ) {
 
       redirected = true;
 
@@ -114,48 +69,77 @@ function checkOrientation() {
       }, 700);
 
     }
+
+    return;
   }
+
+
+  /*
+    MIRING KANAN
+  */
+
+  if (angle === 90) {
+
+    status.textContent = "can YOU price it";
+    clue.textContent = "wrong";
+
+    document.body.style.background = "#5D0D02";
+
+    return;
+  }
+
+  lastOrientation = angle;
 }
 
 
 /*
-  Jalankan sekali saat halaman dibuka,
-  tapi BELUM boleh redirect.
+  DETEKSI PERTAMA
 */
 
+lastOrientation = getOrientation();
 checkOrientation();
-
-firstLoad = false;
 
 
 /*
-  Deteksi HP diputar
+  SAAT HP DIPUTAR
 */
 
 if (screen.orientation) {
 
   screen.orientation.addEventListener(
     "change",
-    checkOrientation
+    () => {
+      checkOrientation();
+      lastOrientation = getOrientation();
+    }
   );
 
 }
 
 
 /*
-  Cadangan untuk perubahan ukuran layar
+  FALLBACK ANDROID
 */
+
+window.addEventListener(
+  "orientationchange",
+  () => {
+
+    setTimeout(() => {
+      checkOrientation();
+    }, 150);
+
+  }
+);
 
 window.addEventListener(
   "resize",
   () => {
 
-    setTimeout(checkOrientation, 100);
+    setTimeout(() => {
+      checkOrientation();
+    }, 150);
 
   }
 );
-
 </script>
-
-</body>
-</html>
