@@ -15,7 +15,6 @@ body {
   place-items: center;
   min-height: 100vh;
   text-align: center;
-  transition: background 0.2s;
 }
 
 main {
@@ -66,26 +65,14 @@ function checkOrientation() {
   const angle = screen.orientation?.angle ?? 0;
 
   if (angle === 270) {
-
-    document.body.style.background = "#000000";
-
-    setTimeout(() => {
-      redirected = true;
-      document.getElementById("status").textContent =
-        "just look.";
-      window.location.href = DRIVE_2;
-    }, 700);
-
+    redirected = true;
+    document.getElementById("status").textContent = "just look.";
+    window.location.href = DRIVE_2;
   } 
   else if (angle === 0) {
-
-    document.body.style.background = "#5D0D02";
-
     redirected = true;
-    document.getElementById("status").textContent =
-      "why";
+    document.getElementById("status").textContent = "why";
     window.location.href = DRIVE_1;
-
   }
 }
 
