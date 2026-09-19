@@ -24,7 +24,7 @@ main {
 
 h1 {
   font-size: 48px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 p {
@@ -49,52 +49,92 @@ p {
 </main>
 
 <script>
-const clue = document.getElementById("clue");
-
-if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-    clue.textContent = "wrong";
-} else {
-    clue.textContent = "...";
-}
-</script>
-
-<script>
 const DRIVE_1 =
 "https://drive.google.com/drive/folders/1valQtwpUoLt5QxvNnAakI_NV4Si_K7vv2_ZXUbYL1OomYRB6t1O0kuFBXlix7EoZ49U4brI3";
 
 const DRIVE_2 =
 "https://drive.google.com/drive/folders/1vCzFLpL1ckXtT_gsUeu6teF2Yjxga9_q";
 
+const status = document.getElementById("status");
+const clue = document.getElementById("clue");
+
 let redirected = false;
 
 function checkOrientation() {
 
-  if (redirected) return;
-
   const angle = screen.orientation?.angle ?? 0;
+
+  /*
+    HP
+    0° = normal
+    270° = diputar ke kiri
+  */
 
   if (angle === 270) {
 
+    status.textContent = "can YOU price it";
+    clue.textContent = "wrong";
+
     document.body.style.background = "#5D0D02";
 
-    redirected = true;
+    if (!redirected) {
+      redirected = true;
 
-    window.location.href = DRIVE_2;
+      setTimeout(() => {
+        window.location.href = DRIVE_2;
+      }, 700);
+    }
 
   } else if (angle === 0) {
 
+    status.textContent = "can YOU prove it.";
+    clue.textContent = "wrong";
+
     document.body.style.background = "#000000";
 
-    redirected = true;
+    if (!redirected) {
+      redirected = true;
 
-    window.location.href = DRIVE_1;
+      setTimeout(() => {
+        window.location.href = DRIVE_1;
+      }, 700);
+    }
   }
 }
 
-setTimeout(checkOrientation, 700);
 
-screen.orientation?.addEventListener("change", checkOrientation);
-window.addEventListener("resize", checkOrientation);
+/*
+  CLUE UNTUK PC
+*/
+
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+  clue.textContent = "wrong";
+} else {
+  clue.textContent = "...";
+}
+
+
+/*
+  CEK SAAT HALAMAN DIBUKA
+*/
+
+setTimeout(checkOrientation, 300);
+
+
+/*
+  CEK SAAT HP DIPUTAR
+*/
+
+screen.orientation?.addEventListener(
+  "change",
+  checkOrientation
+);
+
+window.addEventListener(
+  "resize",
+  checkOrientation
+);
+
 </script>
 
 </body>
