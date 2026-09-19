@@ -33,10 +33,22 @@ p {
 </head>
 
 <body>
+
 <main>
   <h1>☀</h1>
   <p id="status">can YOU prove it.</p>
+  <p id="clue"></p>
 </main>
+
+<script>
+const clue = document.getElementById("clue");
+
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    clue.textContent = "wrong";
+} else {
+    clue.textContent = "...";
+}
+</script>
 
 <script>
 const DRIVE_1 =
@@ -52,16 +64,14 @@ function checkOrientation() {
 
   const angle = screen.orientation?.angle ?? 0;
 
-  if (angle === 90) {
+  if (angle === 270) {
     redirected = true;
-    document.getElementById("status").textContent =
-      "just look.";
+    document.getElementById("status").textContent = "just look.";
     window.location.href = DRIVE_2;
   } 
   else if (angle === 0) {
     redirected = true;
-    document.getElementById("status").textContent =
-      "why";
+    document.getElementById("status").textContent = "why";
     window.location.href = DRIVE_1;
   }
 }
@@ -74,15 +84,3 @@ window.addEventListener("resize", checkOrientation);
 
 </body>
 </html>
-
-<p id="clue"></p>
-
-<script>
-const clue = document.getElementById("clue");
-
-if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-    clue.textContent = "wrong";
-} else {
-    clue.textContent = "...";
-}
-</script>
