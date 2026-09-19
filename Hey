@@ -16,6 +16,7 @@ body {
   place-items: center;
   min-height: 100vh;
   text-align: center;
+  transition: background 0.3s;
 }
 
 main {
@@ -45,10 +46,11 @@ p {
 
   <p id="status">can YOU prove it.</p>
 
-  <p id="clue"></p>
+  <p id="clue">wrong</p>
 </main>
 
 <script>
+
 const DRIVE_1 =
 "https://drive.google.com/drive/folders/1valQtwpUoLt5QxvNnAakI_NV4Si_K7vv2_ZXUbYL1OomYRB6t1O0kuFBXlix7EoZ49U4brI3";
 
@@ -58,81 +60,99 @@ const DRIVE_2 =
 const status = document.getElementById("status");
 const clue = document.getElementById("clue");
 
+let firstLoad = true;
 let redirected = false;
 
 function checkOrientation() {
 
   const angle = screen.orientation?.angle ?? 0;
 
+  console.log("ANGLE:", angle);
+
   /*
-    HP
-    0° = normal
-    270° = diputar ke kiri
+    PC
   */
+  if (!("ontouchstart" in window) && !navigator.maxTouchPoints) {
+    clue.textContent = "...";
+    return;
+  }
 
-  if (angle === 270) {
-
-    status.textContent = "can YOU price it";
-    clue.textContent = "wrong";
-
-    document.body.style.background = "#5D0D02";
-
-    if (!redirected) {
-      redirected = true;
-
-      setTimeout(() => {
-        window.location.href = DRIVE_2;
-      }, 700);
-    }
-
-  } else if (angle === 0) {
+  /*
+    HP TEGAK
+  */
+  if (angle === 0 || angle === 180) {
 
     status.textContent = "can YOU prove it.";
     clue.textContent = "wrong";
 
     document.body.style.background = "#000000";
 
-    if (!redirected) {
+    return;
+  }
+
+  /*
+    HP MIRING
+  */
+  if (angle === 270 || angle === 90) {
+
+    status.textContent = "can YOU price it";
+    clue.textContent = "wrong";
+
+    document.body.style.background = "#5D0D02";
+
+    /*
+      Jangan redirect saat pertama kali halaman dibuka.
+      Redirect hanya setelah HP benar-benar berubah orientasi.
+    */
+
+    if (!firstLoad && !redirected) {
+
       redirected = true;
 
       setTimeout(() => {
-        window.location.href = DRIVE_1;
+        window.location.href = DRIVE_2;
       }, 700);
+
     }
   }
 }
 
 
 /*
-  CLUE UNTUK PC
+  Jalankan sekali saat halaman dibuka,
+  tapi BELUM boleh redirect.
 */
 
-if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-  clue.textContent = "wrong";
-} else {
-  clue.textContent = "...";
+checkOrientation();
+
+firstLoad = false;
+
+
+/*
+  Deteksi HP diputar
+*/
+
+if (screen.orientation) {
+
+  screen.orientation.addEventListener(
+    "change",
+    checkOrientation
+  );
+
 }
 
 
 /*
-  CEK SAAT HALAMAN DIBUKA
+  Cadangan untuk perubahan ukuran layar
 */
-
-setTimeout(checkOrientation, 300);
-
-
-/*
-  CEK SAAT HP DIPUTAR
-*/
-
-screen.orientation?.addEventListener(
-  "change",
-  checkOrientation
-);
 
 window.addEventListener(
   "resize",
-  checkOrientation
+  () => {
+
+    setTimeout(checkOrientation, 100);
+
+  }
 );
 
 </script>
