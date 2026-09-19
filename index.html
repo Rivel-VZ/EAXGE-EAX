@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAXGE EAX</title>
+
+<style>
+body {
+  margin: 0;
+  background: #5D0D02;
+  color: #f0f0f0;
+  font-family: system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+main {
+  padding: 30px;
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+p {
+  opacity: 0.10;
+}
+</style>
+</head>
+
+<body>
+<main>
+  <h1>☀</h1>
+  <p id="status">can YOU prove it.</p>
+</main>
+
+<script>
+const DRIVE_1 =
+"https://drive.google.com/drive/folders/1valQtwpUoLt5QxvNnAakI_NV4Si_K7vv2_ZXUbYL1OomYRB6t1O0kuFBXlix7EoZ49U4brI3";
+
+const DRIVE_2 =
+"https://drive.google.com/drive/folders/1vCzFLpL1ckXtT_gsUeu6teF2Yjxga9_q";
+
+let redirected = false;
+
+function checkOrientation() {
+  if (redirected) return;
+
+  const angle = screen.orientation?.angle ?? 0;
+
+  if (angle === 270) {
+    redirected = true;
+    document.getElementById("status").textContent =
+      "just look.";
+    window.location.href = DRIVE_2;
+  } 
+  else if (angle === 0) {
+    redirected = true;
+    document.getElementById("status").textContent =
+      "why";
+    window.location.href = DRIVE_1;
+  }
+}
+
+setTimeout(checkOrientation, 700);
+
+screen.orientation?.addEventListener("change", checkOrientation);
+window.addEventListener("resize", checkOrientation);
+</script>
+
+</body>
+</html>
+
+<p id="clue"></p>
+
+<script>
+const clue = document.getElementById("clue");
+
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    clue.textContent = "wrong";
+} else {
+    clue.textContent = "...";
+}
+</script>
