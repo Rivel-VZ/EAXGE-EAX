@@ -1,3 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAXGE EAX</title>
+
+<style>
+body {
+  margin: 0;
+  background: #5D0D02;
+  color: #f0f0f0;
+  font-family: system-ui, sans-serif;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+main {
+  padding: 30px;
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+p {
+  opacity: 0.10;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+  <h1>☀</h1>
+  <p id="status">can YOU prove it.</p>
+  <p id="clue"></p>
+</main>
+
+<script>
+const clue = document.getElementById("clue");
+
+if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    clue.textContent = "wrong";
+} else {
+    clue.textContent = "...";
+}
+</script>
+
 <script>
 const DRIVE_1 =
 "https://drive.google.com/drive/folders/1valQtwpUoLt5QxvNnAakI_NV4Si_K7vv2_ZXUbYL1OomYRB6t1O0kuFBXlix7EoZ49U4brI3";
@@ -5,141 +58,42 @@ const DRIVE_1 =
 const DRIVE_2 =
 "https://drive.google.com/drive/folders/1vCzFLpL1ckXtT_gsUeu6teF2Yjxga9_q";
 
-const status = document.getElementById("status");
-const clue = document.getElementById("clue");
-
-let lastOrientation = null;
 let redirected = false;
 
-function getOrientation() {
-
-  if (screen.orientation) {
-    return screen.orientation.angle;
-  }
-
-  if (typeof window.orientation === "number") {
-    return window.orientation;
-  }
-
-  return 0;
-}
-
 function checkOrientation() {
+  if (redirected) return;
 
-  const angle = getOrientation();
+  const angle = screen.orientation?.angle ?? 0;
 
-  console.log("ORIENTATION:", angle);
-
-  /*
-    TEGAK
-  */
-
-  if (angle === 0 || angle === 180) {
-
-    status.textContent = "can YOU prove it.";
-    clue.textContent = "wrong";
+  if (angle === 270) {
 
     document.body.style.background = "#000000";
 
-    return;
-  }
-
-
-  /*
-    MIRING KIRI
-  */
-
-  if (angle === 270 || angle === -90) {
-
-    status.textContent = "can YOU price it";
-    clue.textContent = "wrong";
-
-    document.body.style.background = "#5D0D02";
-
-    if (
-      lastOrientation !== null &&
-      lastOrientation !== angle &&
-      !redirected
-    ) {
-
+    setTimeout(() => {
       redirected = true;
+      document.getElementById("status").textContent =
+        "just look.";
+      window.location.href = DRIVE_2;
+    }, 700);
 
-      setTimeout(() => {
-        window.location.href = DRIVE_2;
-      }, 700);
-
-    }
-
-    return;
-  }
-
-
-  /*
-    MIRING KANAN
-  */
-
-  if (angle === 90) {
-
-    status.textContent = "can YOU price it";
-    clue.textContent = "wrong";
+  } 
+  else if (angle === 0) {
 
     document.body.style.background = "#5D0D02";
 
-    return;
-  }
+    redirected = true;
+    document.getElementById("status").textContent =
+      "why";
+    window.location.href = DRIVE_1;
 
-  lastOrientation = angle;
+  }
 }
 
+setTimeout(checkOrientation, 700);
 
-/*
-  DETEKSI PERTAMA
-*/
-
-lastOrientation = getOrientation();
-checkOrientation();
-
-
-/*
-  SAAT HP DIPUTAR
-*/
-
-if (screen.orientation) {
-
-  screen.orientation.addEventListener(
-    "change",
-    () => {
-      checkOrientation();
-      lastOrientation = getOrientation();
-    }
-  );
-
-}
-
-
-/*
-  FALLBACK ANDROID
-*/
-
-window.addEventListener(
-  "orientationchange",
-  () => {
-
-    setTimeout(() => {
-      checkOrientation();
-    }, 150);
-
-  }
-);
-
-window.addEventListener(
-  "resize",
-  () => {
-
-    setTimeout(() => {
-      checkOrientation();
-    }, 150);
-
-  }
-);
+screen.orientation?.addEventListener("change", checkOrientation);
+window.addEventListener("resize", checkOrientation);
 </script>
+
+</body>
+</html>
